@@ -1,0 +1,32 @@
+.appContainer {
+  display: flex;
+}
+.content {
+  width: 100%;
+}
+.sidebar {
+  min-height: 662px;
+  /* min-height: 41.4rem; */
+}
+.postPage {
+  margin: 20px 50px;
+  background-color: bisque;
+  width: fit-content;
+  border-radius: 5px;
+  border: 1px solid rgb(80, 80, 80);
+  padding: 0 10px;
+}
+.postCard {
+  margin: 20px 50px;
+}
+.hashtag {
+  margin: 0px 3px;
+}
+.reactions {
+  margin-top: 15px;
+}
+.createPost {
+  width: 80%;
+  margin-top: 5%;
+  margin-left: 5%;
+}
