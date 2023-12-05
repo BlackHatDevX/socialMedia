@@ -4,6 +4,7 @@ export const PostListStore = createContext({
   postList: [],
   addPost: () => {},
   deletePost: () => {},
+  fetchPost: () => {},
 });
 
 const postListReducer = (currPostList, action) => {
@@ -13,16 +14,16 @@ const postListReducer = (currPostList, action) => {
   } else if (action.type == "ADD_POST") {
     const newPost = [...action.payload, ...currPostList];
     return newPost;
+  } else if (action.type == "FETCH_POST") {
+    const newPost = [...action.payload, ...currPostList];
+    return newPost;
   } else {
     return currPostList;
   }
 };
 
 const PostListProvider = ({ children }) => {
-  const [postList, dispatchPostList] = useReducer(
-    postListReducer,
-    DEFAULT_POST_LIST
-  );
+  const [postList, dispatchPostList] = useReducer(postListReducer, []);
   const addPost = (fetchedPostData) => {
     const ADD = {
       type: "ADD_POST",
@@ -37,33 +38,23 @@ const PostListProvider = ({ children }) => {
     };
     dispatchPostList(DEL);
   };
+  const fetchPost = (fetchedPosts) => {
+    const ADD = {
+      type: "FETCH_POST",
+      payload: fetchedPosts,
+    };
+    dispatchPostList(ADD);
+  };
 
   return (
     <>
-      <PostListStore.Provider value={{ postList, addPost, deletePost }}>
+      <PostListStore.Provider
+        value={{ postList, addPost, deletePost, fetchPost }}
+      >
         {children}
       </PostListStore.Provider>
     </>
   );
 };
-
-const DEFAULT_POST_LIST = [
-  {
-    id: 2,
-    title: "Going to Mumbai",
-    body: "Hi friends i'm going to mumbai to enjoy my holidays and build up my new office.",
-    reactions: 2,
-    userId: "user-9",
-    tags: ["vacation", "mumbai", "enjoy"],
-  },
-  {
-    id: 1,
-    title: "Passed my exams",
-    body: "Finaly passed my exams now its time for my internship and finally i'm a doctor now",
-    reactions: 15,
-    userId: "user-12",
-    tags: ["exams", "doctor", "joy"],
-  },
-];
 
 export default PostListProvider;
