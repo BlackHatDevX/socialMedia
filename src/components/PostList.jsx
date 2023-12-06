@@ -1,26 +1,37 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import Post from "./Post";
 import { PostListStore } from "../store/PostsListStore";
 import EmptyPost from "./EmptyPost";
+import LoadingSpinner from "./LoadingSpinner";
 
 const PostList = ({ setSelectedTab }) => {
-  const { postList } = useContext(PostListStore);
+  const { postList, fetchPost } = useContext(PostListStore);
+  const [fetching, setFetching] = useState(false);
+
+  useEffect(() => {
+    setFetching(true);
+    fetch("https://dummyjson.com/posts")
+      .then((res) => res.json())
+      .then((data) => {
+        fetchPost(data.posts);
+        setFetching(false);
+      });
+  }, []);
+
   return (
     <>
-      {postList.length === 0 ? (
+      {fetching && <LoadingSpinner />}
+      {!fetching && postList.length === 0 && (
         <div className="postPage">
-          <EmptyPost setSelectedTab={setSelectedTab} />
+          {" "}
+          <EmptyPost setSelectedTab={setSelectedTab} />{" "}
         </div>
-      ) : (
-        <>
-          <div className="postPage">
-            <h1>Posts:</h1>
-          </div>
-          {postList.map((postData) => {
-            return <Post postData={postData} key={postData.id} />;
-          })}
-        </>
       )}
+
+      {!fetching &&
+        postList.map((postData) => {
+          return <Post postData={postData} key={postData.id} />;
+        })}
     </>
   );
 };
