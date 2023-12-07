@@ -6,16 +6,24 @@ import LoadingSpinner from "./LoadingSpinner";
 
 const PostList = ({ setSelectedTab }) => {
   const { postList, fetchPost } = useContext(PostListStore);
-  const [fetching, setFetching] = useState(false);
+  const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
-    setFetching(true);
-    fetch("https://dummyjson.com/posts")
+    const controller = new AbortController();
+    const signal = controller.signal;
+    console.log("fetching started ");
+    fetch("https://dummyjson.com/posts", signal)
       .then((res) => res.json())
       .then((data) => {
         fetchPost(data.posts);
         setFetching(false);
+        console.log("fetching over ");
       });
+
+    return () => {
+      controller.abort();
+      console.log("aborted ");
+    };
   }, []);
 
   return (
@@ -23,14 +31,15 @@ const PostList = ({ setSelectedTab }) => {
       {fetching && <LoadingSpinner />}
       {!fetching && postList.length === 0 && (
         <div className="postPage">
-          {" "}
-          <EmptyPost setSelectedTab={setSelectedTab} />{" "}
+          <EmptyPost setSelectedTab={setSelectedTab} />
         </div>
       )}
 
       {!fetching &&
         postList.map((postData) => {
-          return <Post postData={postData} key={postData.id} />;
+          return (
+            <Post postData={postData} key={Math.random() * Math.random()} />
+          );
         })}
     </>
   );
